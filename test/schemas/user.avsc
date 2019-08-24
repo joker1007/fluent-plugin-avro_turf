@@ -1,0 +1,19 @@
+{
+  "name": "user",
+  "type": "record",
+  "fields": [
+    {
+      "name": "username",
+      "type": "string"
+    },
+    {
+      "name": "email",
+      "type": "string"
+    },
+    {
+      "name": "created_at",
+      "type": "long",
+      "logicalType": "timestamp-millis"
+    }
+  ]
+}
