@@ -22,7 +22,7 @@ module Fluent
     class AvroTurfFormatter < Fluent::Plugin::Formatter
       class AvroTurfVersionImcompatible < StandardError; end
 
-      Fluent::Plugin.register_formatter("avro_turf", self)
+      Fluent::Plugin.register_formatter("avro_turf_messaging", self)
 
       config_param :schema_registry_url, :string, desc: "Schema Registry URL parameter (ex: `http://my-registry:8081/`)"
       config_param :schemas_path, :string, default: nil, desc: "Schemas path to find avsc from local storage"
