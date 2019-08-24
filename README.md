@@ -6,6 +6,8 @@ see. https://docs.confluent.io/current/schema-registry/serializer-formatter.html
 
 The format is based on Apache Avro, but it is not compatible.
 
+Representative use is formatter for https://github.com/fluent/fluent-plugin-kafka
+
 ## Installation
 
 ### RubyGems
@@ -48,16 +50,16 @@ Example.
 | param                      | type   | required | default            | description                                                                                                 |
 | -------------------        | ------ | -------- | -------            | --------------------------------------------------------------                                              |
 | schema_registry_url        | string | true     |                    | Schema Registry URL parameter (ex: `http://my-registry:8081/`)                                              |
-| schemas_path               | string | false    | nil                | Schemas path to find avsc from local storage                                                                |
-| default_schema_name        | string | false    | nil                | Default schema name when the record doesn't have schema_name_key                                            |
-| schema_name_key            | string | false    | `"schema_name"`    | Field for schema name                                                                                       |
-| schema                     | hash   | false    | nil                | Inline schema definition. If this parameter is set, `default_schema_name` and `schema_name_key` are ignored |
-| default_namespace          | string | false    | nil                | Default schema namespace                                                                                    |
-| namespace_key              | string | false    | `"namespace"`      | Field for namespace                                                                                         |
-| schema_version_key         | string | false    | `"schema_version"` | Field for schema version                                                                                    |
-| exclude_schema_name_key    | bool   | false    | false              | Set true to remove schema_name_key field from data                                                          |
-| exclude_namespace_key      | bool   | false    | false              | Set true to remove namespace_key field from data                                                            |
-| exclude_schema_version_key | bool   | false    | false              | Set true to remove schema_version_key field from data                                                       |
+| schemas_path               | string |          | nil                | Schemas path to find avsc from local storage                                                                |
+| default_schema_name        | string |          | nil                | Default schema name when the record doesn't have schema_name_key                                            |
+| schema_name_key            | string |          | `"schema_name"`    | Field for schema name                                                                                       |
+| schema                     | hash   |          | nil                | Inline schema definition. If this parameter is set, `default_schema_name` and `schema_name_key` are ignored |
+| default_namespace          | string |          | nil                | Default schema namespace                                                                                    |
+| namespace_key              | string |          | `"namespace"`      | Field for namespace                                                                                         |
+| schema_version_key         | string |          | `"schema_version"` | Field for schema version                                                                                    |
+| exclude_schema_name_key    | bool   |          | false              | Set true to remove schema_name_key field from data                                                          |
+| exclude_namespace_key      | bool   |          | false              | Set true to remove namespace_key field from data                                                            |
+| exclude_schema_version_key | bool   |          | false              | Set true to remove schema_version_key field from data                                                       |
 
 
 ## Copyright
