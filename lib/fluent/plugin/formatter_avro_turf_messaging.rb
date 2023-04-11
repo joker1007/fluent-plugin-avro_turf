@@ -29,14 +29,18 @@ module Fluent
 
       config_param :default_schema_name, :string, default: nil, desc: "Default schema name when the record doesn't have schema_name_key"
       config_param :schema_name_key, :string, default: "schema_name", desc: "Field for schema name"
-      config_param :subject_key, :string, default: nil, desc: "Field for subject"
+
+      config_param :subject, :string, default: nil, desc: "Set Subject explicitly"
+      config_param :subject_key, :string, default: nil, desc: "Field for subject (that is override the value that is set by `subject`)"
 
       config_param :schema, :hash, default: nil, desc: "Inline schema definition. If this parameter is set, `default_schema_name` and `schema_name_key` are ignored"
+
 
       config_param :default_namespace, :string, default: nil, desc: "Default schema namespace"
       config_param :namespace_key, :string, default: "namespace", desc: "Field for namespace"
 
-      config_param :schema_version_key, :string, default: "schema_version", desc: "Field for schema version"
+      config_param :schema_version, :string, default: nil, desc: "Set schema_version explicitly"
+      config_param :schema_version_key, :string, default: nil, desc: "Field for schema version (that is override the value that is set by `schema_version`)"
 
       config_param :exclude_schema_name_key, :bool, default: false, desc: "Set true to remove schema_name_key field from data"
       config_param :exclude_namespace_key, :bool, default: false, desc: "Set true to remove namespace_key field from data"
@@ -46,6 +50,8 @@ module Fluent
       def configure(conf)
         super
 
+        raise Fluent::ConfigError, "Do not set `schema` and `subject` at the same time" if @schema && @subject
+
         @avro_turf = AvroTurf::Messaging.new(registry_url: @schema_registry_url, schemas_path: @schemas_path)
         if @schema
           schema_store = @avro_turf.instance_variable_get("@schema_store")
@@ -53,6 +59,12 @@ module Fluent
           schemas = schema_store.instance_variable_get("@schemas")
           raise AvroTurfVersionImcompatible.new("Cannot access @schemas in @schema_store") unless schemas
           Avro::Schema.real_parse(@schema, schemas)
+        end
+
+        if @subject && @schema_version.nil?
+          # use latest version when fluentd is launced
+          @schema_version = @avro_turf.instance_variable_get("@registry").subject_versions(@subject).last
+
         end
       end
 
@@ -75,10 +87,12 @@ module Fluent
         if @subject_key
           subject = @exclude_subject_key ? record.delete(@subject_key) : record[@subject_key]
         end
+        subject ||= @subject
 
         if @schema_version_key
           schema_version = @exclude_schema_version_key ? record.delete(@schema_version_key) : record[@schema_version_key]
         end
+        schema_version ||= @schema_version
 
         @avro_turf.encode(record, schema_name: schema_name, namespace: namespace, subject: subject, version: schema_version)
       end
