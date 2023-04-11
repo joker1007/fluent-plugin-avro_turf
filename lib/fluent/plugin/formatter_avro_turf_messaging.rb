@@ -29,6 +29,7 @@ module Fluent
 
       config_param :default_schema_name, :string, default: nil, desc: "Default schema name when the record doesn't have schema_name_key"
       config_param :schema_name_key, :string, default: "schema_name", desc: "Field for schema name"
+      config_param :subject_key, :string, default: nil, desc: "Field for subject"
 
       config_param :schema, :hash, default: nil, desc: "Inline schema definition. If this parameter is set, `default_schema_name` and `schema_name_key` are ignored"
 
@@ -40,6 +41,7 @@ module Fluent
       config_param :exclude_schema_name_key, :bool, default: false, desc: "Set true to remove schema_name_key field from data"
       config_param :exclude_namespace_key, :bool, default: false, desc: "Set true to remove namespace_key field from data"
       config_param :exclude_schema_version_key, :bool, default: false, desc: "Set true to remove schema_version_key field from data"
+      config_param :exclude_subject_key, :bool, default: false, desc: "Set true to remove subject_key field from data"
 
       def configure(conf)
         super
@@ -70,11 +72,15 @@ module Fluent
         end
         namespace ||= @default_namespace
 
+        if @subject_key
+          subject = @exclude_subject_key ? record.delete(@subject_key) : record[@subject_key]
+        end
+
         if @schema_version_key
           schema_version = @exclude_schema_version_key ? record.delete(@schema_version_key) : record[@schema_version_key]
         end
 
-        @avro_turf.encode(record, schema_name: schema_name, namespace: namespace, version: schema_version)
+        @avro_turf.encode(record, schema_name: schema_name, namespace: namespace, subject: subject, version: schema_version)
       end
     end
   end
