@@ -54,9 +54,11 @@ Example.
 | default_schema_name        | string |          | nil                | Default schema name when the record doesn't have schema_name_key                                            |
 | schema_name_key            | string |          | `"schema_name"`    | Field for schema name                                                                                       |
 | schema                     | hash   |          | nil                | Inline schema definition. If this parameter is set, `default_schema_name` and `schema_name_key` are ignored |
+| subject                    | string |          | nil                | Set subject explicitly                                                                                      |
 | subject_key                | string |          | nil                | Field for subject                                                                                           |
 | default_namespace          | string |          | nil                | Default schema namespace                                                                                    |
 | namespace_key              | string |          | `"namespace"`      | Field for namespace                                                                                         |
+| schema_version             | string |          | `"latest"`         | Set schema version explicitly that is only effective when subject or subject_key is set                     |
 | schema_version_key         | string |          | `"schema_version"` | Field for schema version                                                                                    |
 | exclude_schema_name_key    | bool   |          | false              | Set true to remove schema_name_key field from data                                                          |
 | exclude_namespace_key      | bool   |          | false              | Set true to remove namespace_key field from data                                                            |

@@ -32,12 +32,34 @@ class AvroTurfFormatterTest < Test::Unit::TestCase
     }
   end
 
+  test "config error" do
+    assert_raise(Fluent::ConfigError) do
+      create_driver(
+        schema: "dummy",
+        subject: "dummy",
+      )
+    end
+  end
+
   test "format" do
     d = create_driver(
       schema_registry_url: registry_url,
       schemas_path: schemas_path,
     )
     formatted = d.instance.format("tag.test", event_time, user_record.merge("schema_name" => "user"))
+    avro_turf = AvroTurf::Messaging.new(registry_url: registry_url, schemas_path: schemas_path)
+    decoded = avro_turf.decode(formatted, schema_name: "user")
+    assert { decoded == user_record }
+  end
+
+  test "format with subject" do
+    schema = File.read(File.join(schemas_path, "user.avsc"))
+    AvroTurf::ConfluentSchemaRegistry.new(registry_url).register("users-value", schema)
+    d = create_driver(
+      schema_registry_url: registry_url,
+      subject: "users-value",
+    )
+    formatted = d.instance.format("tag.test", event_time, user_record)
     avro_turf = AvroTurf::Messaging.new(registry_url: registry_url, schemas_path: schemas_path)
     decoded = avro_turf.decode(formatted, schema_name: "user")
     assert { decoded == user_record }
